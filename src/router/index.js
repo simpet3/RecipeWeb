@@ -7,6 +7,11 @@ import RecipeView from '@/components/RecipeView'
 import AccountOptions from '@/components/AccountOptions'
 import AddRecipe from '@/components/AccountOptions/AddRecipe'
 import ManageRecipes from '@/components/AccountOptions/ManageRecipes'
+import Admin from '@/components/Admin'
+import AdminManageRecipes from '@/components/Admin/AdminManageRecipes'
+import AdminManageCategories from '@/components/Admin/AdminManageCategories'
+import EditRecipe from '@/components/AccountOptions/EditRecipe'
+
 Vue.use(Router)
 
 const router = new Router({
@@ -27,7 +32,7 @@ const router = new Router({
       redirect: '/home'
     },
     {
-      path: '/RecipesView',
+      path: '/RecipesView/:id',
       name: 'RecipesView',
       component: RecipesView
     },
@@ -35,6 +40,23 @@ const router = new Router({
       path: '/RecipeView',
       name: 'RecipeView',
       component: RecipeView
+    },
+    {
+      path: '/Admin',
+      name: 'Admin',
+      component: Admin,
+      children: [
+        {
+          path: '/Admin/AdminManageCategories',
+          name: 'AdminManageCategories',
+          component: AdminManageCategories
+        },
+        {
+          path: '/Admin/AdminManageRecipes',
+          name: 'AdminManageRecipes',
+          component: AdminManageRecipes
+        }
+      ]
     },
     {
       path: '/AccountOptions',
@@ -50,6 +72,11 @@ const router = new Router({
           path: '/AccountOptions/ManageRecipes',
           name: 'ManageRecipes',
           component: ManageRecipes
+        },
+        {
+          path: '/AccountOptions/EditRecipe',
+          name: 'EditRecipe',
+          component: EditRecipe
         }
       ]
     }

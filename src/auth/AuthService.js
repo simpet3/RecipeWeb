@@ -29,6 +29,7 @@ export default class AuthService {
 
   handleAuthentication () {
     this.auth0.parseHash((err, authResult) => {
+      console.log('handleAuth: user accessToken: ')
       if (authResult && authResult.accessToken && authResult.idToken) {
         this.setSession(authResult)
         router.replace('home')
@@ -45,15 +46,34 @@ export default class AuthService {
     let expiresAt = JSON.stringify(
       authResult.expiresIn * 1000 + new Date().getTime()
     )
+    this.userInfo(authResult)
     localStorage.setItem('access_token', authResult.accessToken)
     localStorage.setItem('id_token', authResult.idToken)
     localStorage.setItem('expires_at', expiresAt)
+    console.log('setSession: user accessToken: ' + authResult.accessToken)
     this.authNotifier.emit('authChange', { authenticated: true })
+  }
+
+  userInfo (authResult) {
+    this.auth0.client.userInfo(authResult.accessToken, function (err, user) {
+      if (authResult) {
+        localStorage.setItem('user_id', user.user_id)
+        // var localUser = this.getUser()
+        // console.log('User_id tas naujas : ' + user.user_id.toString)
+      } else if (err) {
+        console.log(err)
+      }
+    })
+  }
+
+  getUser () {
+    return localStorage.getItem('user_id')
   }
 
   logout () {
     // Clear access token and ID token from local storage
     localStorage.removeItem('access_token')
+    console.log('log accessToken: ' + localStorage.accessToken)
     localStorage.removeItem('id_token')
     localStorage.removeItem('expires_at')
     this.userProfile = null

@@ -1,5 +1,6 @@
 <<template>
   <div>
+     <div slot name="editRecipe">
     <b-form>
     <form class="container" style="background-color:white">
 
@@ -16,7 +17,7 @@
       <div clas="form-group">
         <label class="col-form-label" for="formGroupExampleInput">Recipe type</label>
         <div>
-        <select data-live-search="true" v-model="Recipe.type.id" class="selectpicker"  >
+        <select data-live-search="true" v-model="recipe.type.id" class="selectpicker"  >
           <option v-bind:data-tokens="category.typeName" v-for="category in categories" v-bind:value="Number(category.id)">{{category.typeName}}</option>
         </select>
       </div>
@@ -41,12 +42,13 @@
         <button
           class="btn btn-primary btn-margin"
           v-if="Recipe.description && Recipe.components && Recipe.shortDescription && Recipe.title && Recipe.type.id >0"
-          @click.prevent="PostRecipe()">
-            Post Recipe
+          @click.prevent="updateRecipe(Recipe)">
+            Update Recipe
         </button>
       </div>
     </form>
     </b-form>
+  </div>
   </div>
 </template>
 
@@ -54,7 +56,8 @@
 import axios from 'axios'
 
 export default {
-  name: 'AddRecipe',
+  name: 'EditRecipe',
+  props: ['recipe'],
   data () {
     return {
       categories: [],
@@ -96,9 +99,8 @@ export default {
         id: 0
       }
     },
-    PostRecipe () {
-      console.log('post pradzia')
-      axios.post(`http://localhost:24452/api/category/1/recipes/Recipe`, this.Recipe, {
+    updateRecipe: function (recipe) {
+      axios.put(`http://localhost:24452/api/category/1/recipes/Recipe/${recipe.id}`, recipe, {
         'Authorization': 'Basic Y2xpZW50OnNlY3JldA==',
         'Content-Type': 'application/x-www-form-urlencoded'
       })
@@ -108,12 +110,13 @@ export default {
         .catch(function (error) {
           console.log(error)
         })
-      console.log('PostRecipe pabaiga ')
-      this.cleanForm()
     }
   },
   created () {
     this.getCategoriesFromApi()
+  },
+  mounted () {
+    this.Recipe = this.recipe
   }
 
 }
